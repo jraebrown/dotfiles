@@ -6,7 +6,7 @@ These are the dotfiles I use on my Mac computers, currently running [macOS Catal
 
 ## Table of Contents
 
-- [Mac Bootstrap Script](#mac-bootstrap-script)
+- [Mac Bootstrap Script](#jrb-mac-bootstrap-script)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Fish or Zsh?](#fish-or-zsh)
@@ -39,7 +39,7 @@ These are the dotfiles I use on my Mac computers, currently running [macOS Catal
 
 Need to provision a new Mac from scratch? My Mac Bootstrap script installs and configures the software, dotfiles, and general preferences I use for web development.
 
-&#9657; **Provision a new Mac with [Mac Bootstrap][mac-bootstrap].**
+&#9657; **Provision a new Mac with [Mac Bootstrap][jrb-mac-bootstrap].**
 
 NOTE: Mac Bootstrap automatically clones and installs this dotfiles repo.
 
@@ -58,7 +58,7 @@ The dotfiles assume you are running macOS with the following software pre-instal
 * [asdf][asdf]
 * [Starship][starship]
 
-All of the above and more are included in [Mac Bootstrap][mac-bootstrap]
+All of the above and more are included in [Mac Bootstrap][jrb-mac-bootstrap]
 
 ## Installation
 
@@ -69,7 +69,7 @@ The install script will create the needed directories and symlinks for your setu
 1. Run the installation script.
 
 ```sh
-$ git clone https://github.com/joshukraine/dotfiles.git ~/dotfiles
+$ git clone https://github.com/jraebrown/dotfiles.git ~/dotfiles
 $ bash ~/dotfiles/install.sh
 ```
 
@@ -381,8 +381,8 @@ Copyright &copy; 2014–2020 Joshua Steele. [MIT License][license]
 [iterm2]: https://www.iterm2.com/
 [javascript]: https://developer.mozilla.org/en-US/docs/Web/JavaScript
 [jetbrains-mono]: https://www.jetbrains.com/lp/mono/
-[license]: https://github.com/joshukraine/dotfiles/blob/master/LICENSE
-[mac-bootstrap]: http://jsua.co/macos
+[license]: https://github.com/jraebrown/dotfiles/blob/master/LICENSE
+[jrb-mac-bootstrap]: http://jsua.co/macos
 [material]: https://github.com/kaicataldo/material.vim
 [monolisa]: https://www.monolisa.dev/
 [neo-solarized]: https://github.com/icymind/NeoSolarized
@@ -408,7 +408,7 @@ Copyright &copy; 2014–2020 Joshua Steele. [MIT License][license]
 [tender]: https://github.com/jacoborus/tender.vim
 [tmux]: https://github.com/tmux/tmux/wiki
 [victor-mono]: https://rubjo.github.io/victor-mono/
-[vim-monokai-tasty]: https://github.com/joshukraine/vim-monokai-tasty
+[vim-monokai-tasty]: https://github.com/jraebrown/vim-monokai-tasty
 [vim-one]: https://github.com/rakr/vim-one
 [vim]: http://www.vim.org/
 [vue]: https://vuejs.org/

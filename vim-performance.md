@@ -3,7 +3,7 @@
 
 *January 27, 2018*
 
-I started [this PR](https://github.com/joshukraine/dotfiles/pull/12) because Vim had gotten very slow and laggy. The problem seemed particularly painful when editing Ruby files. For example, when trying to move down by holding the "j" key, the downward motion would continue for a second or two after I'd released the key, causing me to far overshoot my target.
+I started [this PR](https://github.com/jraebrown/dotfiles/pull/12) because Vim had gotten very slow and laggy. The problem seemed particularly painful when editing Ruby files. For example, when trying to move down by holding the "j" key, the downward motion would continue for a second or two after I'd released the key, causing me to far overshoot my target.
 
 There were many other performance issues beyond scrolling. Sometimes even just simply typing in insert mode was noticeably slow. I knew things were getting serious when I found myself watching tutorial videos for Microsoft Visual Studio Code.
 

@@ -280,8 +280,8 @@ Plug 'neoclide/coc.nvim',
 Plug 'dense-analysis/ale'                             " Asynchronous Lint Engine                | https://github.com/dense-analysis/ale
 Plug 'sdras/vue-vscode-snippets'                      " Vue VSCode Snippets                     | https://github.com/sdras/vue-vscode-snippets
 Plug 'mattn/emmet-vim'                                " emmet for vim                           | https://github.com/mattn/emmet-vim
-Plug 'joshukraine/vscode-es7-javascript-react-snippets',
-      \ { 'do': 'yarn install --frozen-lockfile && yarn compile' } " React VSCode snippets      | https://github.com/joshukraine/vscode-es7-javascript-react-snippets
+Plug 'jraebrown/vscode-es7-javascript-react-snippets',
+      \ { 'do': 'yarn install --frozen-lockfile && yarn compile' } " React VSCode snippets      | https://github.com/jraebrown/vscode-es7-javascript-react-snippets
 
 " Ruby-specific
 Plug 'vim-ruby/vim-ruby'                " Vim/Ruby Configuration Files                          | https://github.com/vim-ruby/vim-ruby
@@ -307,11 +307,11 @@ Plug 'rakr/vim-one'                     " Adaptation of Atom One colorscheme for
 Plug 'bluz71/vim-nightfly-guicolors'    " Another dark color scheme for Vim                     | https://github.com/bluz71/vim-nightfly-guicolors
 Plug 'sonph/onehalf', {'rtp': 'vim/'}   " A colorscheme for (Neo)Vim, iTerm, and more.          | https://github.com/sonph/onehalf
 Plug 'arcticicestudio/nord-vim'         " Vim colorscheme based on the Nord color palette       | https://github.com/arcticicestudio/nord-vim
-Plug 'joshukraine/oceanic-next',
-      \ {'branch': 'js/color-tweaks'}   " Oceanic Next theme for neovim                         | https://github.com/joshukraine/oceanic-next
+Plug 'jraebrown/oceanic-next',
+      \ {'branch': 'js/color-tweaks'}   " Oceanic Next theme for neovim                         | https://github.com/jraebrown/oceanic-next
 Plug 'jacoborus/tender.vim'             " A 24bit colorscheme for Vim, Airline and Lightline    | https://github.com/jacoborus/tender.vim
 Plug 'morhetz/gruvbox'                  " Retro groove color scheme for Vim                     | https://github.com/morhetz/gruvbox
-Plug 'joshukraine/vim-monokai-tasty',   " My fork of patstockwell/vim-monokai-tasty             | https://github.com/joshukraine/vim-monokai-tasty
+Plug 'jraebrown/vim-monokai-tasty',   " My fork of patstockwell/vim-monokai-tasty             | https://github.com/jraebrown/vim-monokai-tasty
 
 " Syntax Highlighting
 Plug 'hail2u/vim-css3-syntax'           " CSS3 syntax                                           | https://github.com/hail2u/vim-css3-syntax
