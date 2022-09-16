@@ -128,7 +128,7 @@ For this reason, I've introduced a `machines/` folder where I keep configs that 
 
 ```
 machines/
-├── joshuas-imac
+├── jonathans-imac
 │   ├── Brewfile -> ../../Brewfile
 │   ├── Brewfile.lock.json
 │   ├── alacritty.yml
@@ -137,7 +137,7 @@ machines/
 │   ├── com.googlecode.iterm2.plist
 │   ├── starship.toml
 │   └── tmux.conf.custom
-└── joshuas-mbp15
+└── jonathans-mbp15
     ├── Brewfile -> ../../Brewfile
     ├── Brewfile.lock.json
     ├── alacritty.yml
@@ -201,7 +201,7 @@ nvim/
 Every machine I manage has a `colorscheme.vim` file in its directory. That file defines in one line which colorscheme should be used. For example:
 
 ```
-" machines/joshuas-imac/colorscheme.vim
+" machines/jonathans-imac/colorscheme.vim
 
 exe 'source' stdpath('config') . '/colorschemes/gruvbox.vim'
 ```
@@ -230,7 +230,7 @@ The last tweak is for Tmux. I like to set custom hex color codes for the status 
 The main `tmux.conf` file contains all the settings that Tmux needs. However, any setting that is re-declared in `machines/$HOST_NAME/tmux.conf.custom` will override the defaults.
 
 ```
-# machines/joshuas-imac/tmux.conf.custom
+# machines/jonathans-imac/tmux.conf.custom
 
 # Gruvbox {{{
 setw -g window-status-style fg=$BLACK,bg=$BRIGHT_BLUE
@@ -336,7 +336,7 @@ The `.zshrc` script can be profiled by touching the file `~/.zshrc.profiler` and
 * Lars Kappert (https://github.com/webpro/dotfiles)
 * Ryan Bates (https://github.com/ryanb/dotfiles)
 * Ben Orenstein (https://github.com/r00k/dotfiles)
-* Joshua Clayton (https://github.com/joshuaclayton/dotfiles)
+* Jonathan Clayton (https://github.com/joshuaclayton/dotfiles)
 * Drew Neil (https://github.com/nelstrom/dotfiles)
 * Kevin Suttle (https://github.com/kevinSuttle/OSXDefaults)
 * Carlos Becker (https://github.com/caarlos0/dotfiles)
@@ -356,7 +356,7 @@ The `.zshrc` script can be profiled by touching the file `~/.zshrc.profiler` and
 
 ## License
 
-Copyright &copy; 2014–2020 Joshua Steele. [MIT License][license]
+Copyright &copy; 2014–2020 Jonathan Rae-Brown. [MIT License][license]
 
 [alacritty-colorschemes]: https://github.com/alacritty/alacritty/wiki/Color-schemes
 [alacritty]: https://github.com/alacritty/alacritty
