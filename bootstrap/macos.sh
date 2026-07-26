@@ -34,8 +34,8 @@ export CF_API_TOKEN="${CF_API_TOKEN:-}"
 # calling this script — no need to clone again here.
 cd "$HOME/dotfiles/bootstrap"
 
-echo "📦 Running APFS setup…"
-source apfs.sh
+echo "📦 Skipping APFS/cache relocation — not run at boot anymore."
+echo "   Run 'check-cache-size' manually anytime to monitor Caches usage."
 
 echo "🍺 Installing Homebrew + packages…"
 source brew.sh
