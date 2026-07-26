@@ -103,8 +103,8 @@ ingress:
 EOF
 
 echo "🌐 Creating DNS records…"
-cloudflared tunnel route dns macbookair macbookair.jraebrown.com
-cloudflared tunnel route dns rpi4 rpi4.jraebrown.com
+cloudflared tunnel route dns --overwrite-dns macbookair macbookair.jraebrown.com
+cloudflared tunnel route dns --overwrite-dns rpi4 rpi4.jraebrown.com
 
 echo "⚙️ Creating launchd services…"
 mkdir -p "$HOME/Library/LaunchAgents"
