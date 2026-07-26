@@ -14,13 +14,13 @@ echo "🔍 Applying Spotlight indexing rules…"
 ###############################################################################
 
 sudo mdutil -i on "$HOME/Documents"
-sudo mdutil -i on "/Volumes/Work"
+sudo mdutil -i on "/Volumes/Backup/Work"
 
 ###############################################################################
 # Disable indexing on CloudCache + Caches
 ###############################################################################
 
-sudo mdutil -i off "/Volumes/CloudCache"
+sudo mdutil -i off "/Volumes/Backup/CloudCache"
 sudo mdutil -i off "/Volumes/Caches"
 
 ###############################################################################
@@ -41,7 +41,7 @@ find /Applications -type d -name "*.app" -maxdepth 1 -exec sudo mdutil -i off "{
 # Shallow indexing for cloud storage (first 2 levels only)
 ###############################################################################
 
-for cloud in "/Volumes/CloudCache/iCloud" "/Volumes/CloudCache/OneDrive" "/Volumes/CloudCache/GoogleDrive"; do
+for cloud in "/Volumes/Backup/CloudCache/iCloud" "/Volumes/Backup/CloudCache/OneDrive" "/Volumes/Backup/CloudCache/GoogleDrive"; do
   if [[ -d "$cloud" ]]; then
     echo "📁 Configuring shallow indexing for $cloud…"
     sudo mdutil -i on "$cloud"

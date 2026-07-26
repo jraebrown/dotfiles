@@ -7,6 +7,10 @@ set -euo pipefail
 # Called automatically by launchd every 60 seconds.
 ###############################################################################
 
+if [[ $# -lt 1 ]]; then
+  echo "Usage: mount-rpi <rpi4|rpi3>"
+  exit 1
+fi
 TARGET="$1"
 
 if [[ -z "$TARGET" ]]; then

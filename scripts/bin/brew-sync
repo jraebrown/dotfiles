@@ -9,6 +9,11 @@ set -euo pipefail
 
 BUNDLE="$HOME/dotfiles/Brewfile"
 
+if [[ $# -lt 1 ]]; then
+  echo "Usage: brew-sync <export|import>"
+  exit 1
+fi
+
 case "$1" in
   export)
     echo "📤 Exporting Brewfile → $BUNDLE"

@@ -78,10 +78,10 @@ echo "🔍 Configuring Spotlight indexing…"
 
 # Enable indexing on Documents + Work
 sudo mdutil -i on "$HOME/Documents"
-sudo mdutil -i on "/Volumes/Work"
+sudo mdutil -i on "/Volumes/Backup/Work"
 
 # Disable indexing on CloudCache + Caches
-sudo mdutil -i off "/Volumes/CloudCache"
+sudo mdutil -i off "/Volumes/Backup/CloudCache"
 sudo mdutil -i off "/Volumes/Caches"
 
 # Disable indexing on Backup folders

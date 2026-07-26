@@ -24,7 +24,11 @@ if [[ "$(uname -m)" == "arm64" ]]; then
   # Load Homebrew environment
   eval "$(/opt/homebrew/bin/brew shellenv)"
 else
-  echo "⚠️ Intel Mac detected — adjust Homebrew paths manually."
+  if [[ ! -d "/usr/local/Homebrew" ]]; then
+    echo "➕ Installing Homebrew for Intel…"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+  eval "$(/usr/local/bin/brew shellenv)"
 fi
 
 ###############################################################################
