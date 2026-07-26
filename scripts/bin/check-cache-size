@@ -1,0 +1,39 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+###############################################################################
+# check-cache-size
+# Reports cache/cloud folder sizes on the internal SSD. Read-only — never
+# moves, symlinks, or deletes anything. Run manually whenever you want,
+# or add to cron/launchd for a periodic email/notification if desired.
+###############################################################################
+
+WARN_GB="${WARN_GB:-20}"
+
+echo "📊 Cache & cloud storage usage on internal SSD:"
+echo ""
+
+check() {
+  local label="$1"
+  local path="$2"
+  if [[ -d "$path" ]]; then
+    local size_kb
+    size_kb=$(du -sk "$path" 2>/dev/null | awk '{print $1}')
+    local size_gb=$((size_kb / 1024 / 1024))
+    printf "  %-30s %6s GB   %s\n" "$label" "$size_gb" "$path"
+    if (( size_gb >= WARN_GB )); then
+      echo "    ⚠️  Over ${WARN_GB}GB — consider clearing manually."
+    fi
+  fi
+}
+
+check "User Caches"        "$HOME/Library/Caches"
+check "iCloud Drive"       "$HOME/Library/Mobile Documents"
+check "OneDrive"           "$HOME/OneDrive"
+check "Google Drive"       "$HOME/Google Drive"
+check "Xcode DerivedData"  "$HOME/Library/Developer/Xcode/DerivedData"
+check "Homebrew cache"     "$HOME/Library/Caches/Homebrew"
+
+echo ""
+echo "To clear user caches safely (apps will rebuild what they need):"
+echo "  rm -rf ~/Library/Caches/*   (review first — do NOT run blindly)"
