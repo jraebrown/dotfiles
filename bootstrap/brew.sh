@@ -43,15 +43,12 @@ echo "📦 Installing core packages…"
 brew install python node fzf nano gh cloudflared jq wget curl tmux
 
 ###############################################################################
-# Install zsh4humans
+# zsh4humans is NOT installed here — its installer requires an interactive
+# terminal and cannot run under curl|bash (confirmed: no non-interactive
+# flag exists, see romkatv/zsh4humans#94). Instead, .zshrc's bootstrap
+# snippet will trigger z4h to install itself automatically the first time
+# you open a real interactive terminal after this script finishes.
 ###############################################################################
-
-echo "💡 Installing zsh4humans…"
-if [[ ! -d "${XDG_CACHE_HOME:-$HOME/.cache}/z4h" ]]; then
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/romkatv/zsh4humans/v5/install)"
-else
-  echo "✔️ zsh4humans already installed."
-fi
 
 ###############################################################################
 # Install nano syntax highlighting
