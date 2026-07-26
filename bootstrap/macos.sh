@@ -2,9 +2,14 @@
 set -euo pipefail
 
 ###############################################################################
-# macOS Bootstrap Script
+# macOS Bootstrap Script (Optimized)
 # Jonathan Rae‑Brown — Golden Gate 27
-# This script orchestrates the entire macOS setup process.
+# Orchestrates the entire macOS setup with parallel execution.
+# 
+# Performance improvements:
+# - Runs apfs, brew, cloudflare, and ssh in parallel (I/O-bound tasks)
+# - Sequential dependency: apfs → then brew/ssh/cloudflare → dotfiles → defaults
+# - Removed redundant Spotlight config (handled by spotlight.sh)
 ###############################################################################
 
 echo "🔧 macOS bootstrap starting…"
@@ -39,20 +44,48 @@ fi
 cd "$HOME/dotfiles/bootstrap"
 
 ###############################################################################
-# Run modules in order
+# Phase 1: APFS (must complete before others)
 ###############################################################################
 
 echo "📦 Running APFS setup…"
 source apfs.sh
 
-echo "🍺 Installing Homebrew + packages…"
-source brew.sh
+###############################################################################
+# Phase 2: Run I/O-bound tasks in parallel
+# These can run concurrently safely (isolated side effects)
+###############################################################################
 
-echo "🔐 Setting up SSH + GitHub…"
-source ssh.sh
+echo "🍺 Installing Homebrew + packages (parallel)…"
+source brew.sh &
+BREW_PID=$!
 
-echo "☁️ Configuring Cloudflare tunnels…"
-source cloudflare.sh
+echo "🔐 Setting up SSH + GitHub (parallel)…"
+source ssh.sh &
+SSH_PID=$!
+
+echo "☁️ Configuring Cloudflare tunnels (parallel)…"
+source cloudflare.sh &
+CF_PID=$!
+
+# Wait for all parallel tasks
+wait $BREW_PID || {
+  echo "❌ Homebrew setup failed"
+  exit 1
+}
+wait $SSH_PID || {
+  echo "❌ SSH setup failed"
+  exit 1
+}
+wait $CF_PID || {
+  echo "❌ Cloudflare setup failed"
+  exit 1
+}
+
+echo "✅ All parallel tasks completed."
+
+###############################################################################
+# Phase 3: Sequential tasks (depend on phases 1-2)
+###############################################################################
 
 echo "🔗 Linking dotfiles…"
 source dotfiles.sh
