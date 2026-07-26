@@ -1,0 +1,6 @@
+#!/usr/bin/env zsh
+set -e
+
+echo "📦 Regenerating manifest (excluding manifest.sha)…"
+find . -type f ! -name manifest.sha -exec shasum {} \; > manifest.sha
+echo "✨ Manifest updated."
