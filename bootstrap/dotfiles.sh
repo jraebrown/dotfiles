@@ -74,6 +74,7 @@ link "scripts/bin/link-dotfiles" ".local/bin/link-dotfiles"
 link "scripts/bin/mount-rpi" ".local/bin/mount-rpi"
 link "scripts/bin/update-system" ".local/bin/update-system"
 link "scripts/bin/brew-sync" ".local/bin/brew-sync"
+link "scripts/bin/cache-guard" ".local/bin/cache-guard"
 
 ###############################################################################
 # Summary

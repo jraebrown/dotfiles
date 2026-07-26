@@ -1,0 +1,67 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+###############################################################################
+# cache-guard
+# Keeps ~/Library/Caches symlinked to the external "Caches" volume when it's
+# mounted, and to a small quota-capped volume on the INTERNAL disk when it
+# isn't. Internal usage is hard-capped by the quota, so a disconnect never
+# lets caches balloon unbounded on your main SSD.
+#
+# Run once manually to set up the fallback volume, then install the
+# LaunchAgent below so this runs at login and periodically thereafter.
+###############################################################################
+
+FALLBACK_QUOTA="${FALLBACK_QUOTA:-5G}"     # cap on internal fallback volume
+EXTERNAL_LINK="/Volumes/Caches/user/Caches"
+FALLBACK_LINK="/Volumes/CachesFallback/Caches"
+USER_CACHE="$HOME/Library/Caches"
+
+###############################################################################
+# One-time: create the internal fallback volume if it doesn't exist yet
+###############################################################################
+
+setup_fallback_volume() {
+  local internal_container
+  internal_container="$(diskutil info / | awk -F': +' '/APFS Container Reference/{print $2}')"
+
+  if ! diskutil apfs list -plist "$internal_container" | python3 -c "
+import plistlib, sys
+d = plistlib.loads(sys.stdin.buffer.read())
+names = [v.get('Name') for v in d['Containers'][0]['Volumes']]
+sys.exit(0 if 'CachesFallback' in names else 1)
+"; then
+    echo "➕ Creating internal fallback volume 'CachesFallback' (quota $FALLBACK_QUOTA)…"
+    diskutil apfs addVolume "$internal_container" APFS CachesFallback -quota "$FALLBACK_QUOTA"
+  fi
+
+  mkdir -p "$FALLBACK_LINK"
+}
+
+###############################################################################
+# Point ~/Library/Caches at whichever target is currently available
+###############################################################################
+
+sync_symlink() {
+  local target
+
+  if [[ -d "/Volumes/Caches/user" ]]; then
+    target="$EXTERNAL_LINK"
+  else
+    target="$FALLBACK_LINK"
+  fi
+
+  local current
+  current="$(readlink "$USER_CACHE" 2>/dev/null || true)"
+
+  if [[ "$current" == "$target" ]]; then
+    return 0   # already correct, nothing to do
+  fi
+
+  echo "🔗 Relinking ~/Library/Caches → $target"
+  rm -f "$USER_CACHE"        # only ever removes the symlink itself, never real data
+  ln -s "$target" "$USER_CACHE"
+}
+
+setup_fallback_volume
+sync_symlink

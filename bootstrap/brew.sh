@@ -24,11 +24,7 @@ if [[ "$(uname -m)" == "arm64" ]]; then
   # Load Homebrew environment
   eval "$(/opt/homebrew/bin/brew shellenv)"
 else
-  if [[ ! -d "/usr/local/Homebrew" ]]; then
-    echo "➕ Installing Homebrew for Intel…"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  fi
-  eval "$(/usr/local/bin/brew shellenv)"
+  echo "⚠️ Intel Mac detected — adjust Homebrew paths manually."
 fi
 
 ###############################################################################
@@ -48,6 +44,36 @@ brew install \
   wget \
   curl \
   tmux
+
+###############################################################################
+# Install apps + AI CLIs
+###############################################################################
+
+echo "🧰 Installing apps…"
+
+brew install --cask iterm2
+brew install gemini-cli          # NOTE: deprecated 2026-12-18, replacement is antigravity-cli
+brew install --cask google-gemini
+brew install --cask microsoft-365-copilot
+brew install --cask claude
+
+###############################################################################
+# Restore iTerm2 preferences from dotfiles
+# One-time step on your CURRENT machine before this is useful:
+#   defaults write com.googlecode.iterm2 PrefsCustomFolder \
+#     -string "$HOME/dotfiles/iterm2"
+#   defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
+#   Then Preferences > General > Settings > "Save Settings to Folder" once
+#   to drop com.googlecode.iterm2.plist into ~/dotfiles/iterm2/, commit it.
+###############################################################################
+
+if [[ -f "$HOME/dotfiles/iterm2/com.googlecode.iterm2.plist" ]]; then
+  echo "🖥️  Restoring iTerm2 preferences from dotfiles…"
+  defaults write com.googlecode.iterm2 PrefsCustomFolder -string "$HOME/dotfiles/iterm2"
+  defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
+else
+  echo "⚠️  No iTerm2 prefs found in dotfiles yet — run the one-time export first (see comment above)."
+fi
 
 ###############################################################################
 # Install zsh4humans
