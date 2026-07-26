@@ -3,18 +3,12 @@ set -euo pipefail
 
 ###############################################################################
 # SSH + GitHub Setup
-# Generates shared ed25519 key, configures ssh-agent, uploads key to GitHub,
-# installs SSH config, and sets Git identity.
 ###############################################################################
 
 echo "🔐 SSH setup starting…"
 
 KEY="$HOME/.ssh/id_ed25519"
 PUB="$HOME/.ssh/id_ed25519.pub"
-
-###############################################################################
-# Generate shared ed25519 key if missing
-###############################################################################
 
 if [[ -f "$KEY" ]]; then
   echo "✔️ SSH key already exists at $KEY"
@@ -23,39 +17,37 @@ else
   ssh-keygen -t ed25519 -C "$GIT_EMAIL" -f "$KEY" -N ""
 fi
 
-###############################################################################
-# Start ssh-agent and add key
-###############################################################################
-
 echo "🔧 Starting ssh-agent…"
 eval "$(ssh-agent -s)"
 
 echo "➕ Adding SSH key to agent…"
 ssh-add "$KEY"
 
-###############################################################################
-# Git identity
-###############################################################################
-
 echo "👤 Configuring Git identity…"
-
 git config --global user.name "$GIT_USER"
 git config --global user.email "$GIT_EMAIL"
 
 ###############################################################################
-# GitHub authentication (passkey / iCloud Keychain)
+# GitHub authentication — non-interactive only.
+# `gh auth login` with no args is an interactive menu and will hang/fail
+# under curl|bash. Requires GH_TOKEN set beforehand:
+#   GH_TOKEN=ghp_xxx EXTERNAL_VOLUME_NAME=Backup curl -sSL https://jraebrown.com/setup | bash
+# Create a token at: https://github.com/settings/tokens (needs 'admin:public_key' scope)
 ###############################################################################
 
-echo "📤 Logging into GitHub (passkey recommended)…"
-gh auth login
-
-###############################################################################
-# Upload SSH key to GitHub
-###############################################################################
+if gh auth status >/dev/null 2>&1; then
+  echo "✔️ Already authenticated with GitHub."
+elif [[ -n "${GH_TOKEN:-}" ]]; then
+  echo "📤 Logging into GitHub using GH_TOKEN…"
+  echo "$GH_TOKEN" | gh auth login --hostname github.com --git-protocol ssh --with-token
+else
+  echo "❌ Not authenticated with GitHub and no GH_TOKEN set."
+  echo "   Set GH_TOKEN to a personal access token (admin:public_key scope) and rerun,"
+  echo "   or run 'gh auth login' manually first in an interactive terminal."
+  exit 1
+fi
 
 echo "📡 Uploading SSH key to GitHub…"
-
-# Check if key already exists on GitHub
 if gh ssh-key list | grep -q "$(cat "$PUB")"; then
   echo "✔️ SSH key already uploaded to GitHub."
 else
@@ -63,22 +55,13 @@ else
   echo "✨ SSH key uploaded to GitHub."
 fi
 
-###############################################################################
-# Install SSH config
-###############################################################################
-
 echo "📁 Installing SSH config…"
-
 mkdir -p "$HOME/.ssh"
 cp "$HOME/dotfiles/ssh/config" "$HOME/.ssh/config"
 
 chmod 600 "$HOME/.ssh/config"
 chmod 600 "$KEY"
 chmod 644 "$PUB"
-
-###############################################################################
-# Summary
-###############################################################################
 
 echo ""
 echo "✨ SSH setup complete."
