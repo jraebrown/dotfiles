@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+set -e
+
+echo "🔍 Verifying all files against manifest…"
+shasum -c manifest.sha | grep -v OK || true
+
+echo "✨ Done."

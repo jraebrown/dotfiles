@@ -1,0 +1,11 @@
+#!/usr/bin/env zsh
+set -e
+
+git add -A
+if ! git diff --cached --quiet; then
+  git commit -m "sync $(date '+%Y-%m-%d %H:%M')"
+  git push
+  echo "✓ pushed"
+else
+  echo "✓ nothing to push"
+fi
