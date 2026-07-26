@@ -57,7 +57,14 @@ fi
 
 echo "📁 Installing SSH config…"
 mkdir -p "$HOME/.ssh"
-cp "$HOME/dotfiles/ssh/config" "$HOME/.ssh/config"
+
+# macOS 'cp' exits non-zero (fatal under set -e) if source and destination
+# are already identical — only copy if they actually differ.
+if ! cmp -s "$HOME/dotfiles/ssh/config" "$HOME/.ssh/config" 2>/dev/null; then
+  cp "$HOME/dotfiles/ssh/config" "$HOME/.ssh/config"
+else
+  echo "✔️ SSH config already up to date."
+fi
 
 chmod 600 "$HOME/.ssh/config"
 chmod 600 "$KEY"

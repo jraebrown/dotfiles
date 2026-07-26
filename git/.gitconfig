@@ -1,8 +1,8 @@
 # Jonathan Rae‑Brown — Git configuration
 
 [user]
-    name = Jonathan Rae-Brown
-    email = me@jraebrown.com
+	name = jraebrown
+	email = me@jraebrown.com
 
 [core]
     editor = nano
