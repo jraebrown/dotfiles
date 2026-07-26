@@ -1,0 +1,48 @@
+# Jonathan Rae‑Brown — global gitignore
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Spotlight
+.Spotlight-V100
+.Trashes
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Virtual environments
+venv/
+.env/
+.envrc
+
+# Editors
+*.swp
+*.swo
+
+# macOS metadata
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# Cloud sync noise
+*.icloud
+*.tmp
+*.part

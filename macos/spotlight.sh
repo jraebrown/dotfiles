@@ -2,73 +2,57 @@
 set -euo pipefail
 
 ###############################################################################
-# Debian / Raspberry Pi Bootstrap
-# Installs zsh, fzf, cockpit, nano, Git, and links Linux dotfiles.
+# Spotlight Indexing Rules — Jonathan Rae‑Brown
+# Minimal indexing: only Documents, Work, and shallow cloud folders.
+# Disable indexing on CloudCache, Caches, Backup, and app bundles.
 ###############################################################################
 
-echo "🐧 Debian bootstrap starting…"
+echo "🔍 Applying Spotlight indexing rules…"
 
 ###############################################################################
-# Update system
+# Enable indexing on Documents + Work
 ###############################################################################
 
-sudo apt update
-sudo apt upgrade -y
+sudo mdutil -i on "$HOME/Documents"
+sudo mdutil -i on "/Volumes/Work"
 
 ###############################################################################
-# Install core packages
+# Disable indexing on CloudCache + Caches
 ###############################################################################
 
-sudo apt install -y \
-  zsh \
-  git \
-  fzf \
-  nano \
-  curl \
-  wget \
-  cockpit \
-  tmux
+sudo mdutil -i off "/Volumes/CloudCache"
+sudo mdutil -i off "/Volumes/Caches"
 
 ###############################################################################
-# Set zsh as default shell
+# Disable indexing on Backup folders
 ###############################################################################
 
-if [[ "$SHELL" != "/usr/bin/zsh" ]]; then
-  chsh -s /usr/bin/zsh
+if [[ -d "$HOME/Backup" ]]; then
+  sudo mdutil -i off "$HOME/Backup"
 fi
 
 ###############################################################################
-# Link dotfiles (Linux variant)
+# Disable indexing inside app bundles
 ###############################################################################
 
-DOTFILES="$HOME/dotfiles"
-
-link() {
-  local src="$DOTFILES/$1"
-  local dest="$HOME/$2"
-
-  mkdir -p "$(dirname "$dest")"
-  ln -sf "$src" "$dest"
-  echo "✔️ Linked $src → $dest"
-}
-
-link "zsh/.zshrc" ".zshrc"
-link "zsh/aliases.zsh" ".config/zsh/aliases.zsh"
-link "zsh/env.zsh" ".config/zsh/env.zsh"
-link "linux/debian.sh" ".config/linux/debian.sh"
+find /Applications -type d -name "*.app" -maxdepth 1 -exec sudo mdutil -i off "{}" \; 2>/dev/null || true
 
 ###############################################################################
-# Cockpit service
+# Shallow indexing for cloud storage (first 2 levels only)
 ###############################################################################
 
-sudo systemctl enable cockpit
-sudo systemctl start cockpit
+for cloud in "/Volumes/CloudCache/iCloud" "/Volumes/CloudCache/OneDrive" "/Volumes/CloudCache/GoogleDrive"; do
+  if [[ -d "$cloud" ]]; then
+    echo "📁 Configuring shallow indexing for $cloud…"
+    sudo mdutil -i on "$cloud"
+    find "$cloud" -mindepth 3 -maxdepth 10 -type d -exec sudo mdutil -i off "{}" \; 2>/dev/null || true
+  fi
+done
 
 ###############################################################################
 # Summary
 ###############################################################################
 
 echo ""
-echo "✨ Debian bootstrap complete."
-echo "Cockpit is running at: http://$(hostname -I | awk '{print $1}'):9090"
+echo "✨ Spotlight indexing rules applied."
 echo ""

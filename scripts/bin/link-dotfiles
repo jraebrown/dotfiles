@@ -1,0 +1,37 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+###############################################################################
+# link-dotfiles
+# Manual re-linking helper for Jonathan Rae‑Brown
+###############################################################################
+
+DOTFILES="$HOME/dotfiles"
+
+link() {
+  local src="$DOTFILES/$1"
+  local dest="$HOME/$2"
+
+  mkdir -p "$(dirname "$dest")"
+  ln -sf "$src" "$dest"
+  echo "✔️ Linked $src → $dest"
+}
+
+echo "🔗 Relinking dotfiles…"
+
+link "zsh/.zshrc" ".zshrc"
+link "zsh/zsh4humans.conf" ".config/zsh/zsh4humans.conf"
+link "zsh/aliases.zsh" ".config/zsh/aliases.zsh"
+link "zsh/env.zsh" ".config/zsh/env.zsh"
+
+link "git/.gitconfig" ".gitconfig"
+link "git/.gitignore_global" ".gitignore_global"
+
+link "ssh/config" ".ssh/config"
+
+link "macos/spotlight.sh" ".config/macos/spotlight.sh"
+link "linux/debian.sh" ".config/linux/debian.sh"
+
+echo ""
+echo "✨ Dotfiles re-linked."
+echo ""

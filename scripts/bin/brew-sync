@@ -1,0 +1,29 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+###############################################################################
+# brew-sync
+# Exports and imports Homebrew bundle lists.
+# Lets you sync your macOS package set across machines.
+###############################################################################
+
+BUNDLE="$HOME/dotfiles/Brewfile"
+
+case "$1" in
+  export)
+    echo "📤 Exporting Brewfile → $BUNDLE"
+    brew bundle dump --file="$BUNDLE" --force
+    echo "✨ Brewfile exported."
+    ;;
+
+  import)
+    echo "📥 Importing Brewfile from $BUNDLE"
+    brew bundle install --file="$BUNDLE"
+    echo "✨ Brewfile imported."
+    ;;
+
+  *)
+    echo "Usage: brew-sync <export|import>"
+    exit 1
+    ;;
+esac

@@ -1,0 +1,31 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+###############################################################################
+# update-system
+# Unified macOS + Debian update script.
+###############################################################################
+
+OS="$(uname -s)"
+
+echo "🔧 Updating system ($OS)…"
+
+if [[ "$OS" == "Darwin" ]]; then
+  echo "🍎 Updating macOS software…"
+  sudo softwareupdate -ia
+
+  echo "🍺 Updating Homebrew…"
+  brew update
+  brew upgrade
+  brew cleanup
+
+elif [[ "$OS" == "Linux" ]]; then
+  echo "🐧 Updating Debian packages…"
+  sudo apt update
+  sudo apt upgrade -y
+  sudo apt autoremove -y
+fi
+
+echo ""
+echo "✨ System updated."
+echo ""

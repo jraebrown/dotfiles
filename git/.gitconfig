@@ -1,0 +1,32 @@
+# Jonathan Rae‑Brown — Git configuration
+
+[user]
+    name = Jonathan Rae-Brown
+    email = me@jraebrown.com
+
+[core]
+    editor = nano
+    excludesfile = ~/.gitignore_global
+    autocrlf = input
+
+[color]
+    ui = auto
+
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    cm = commit
+    lg = log --oneline --graph --decorate
+
+[push]
+    default = current
+
+[pull]
+    rebase = false
+
+[credential]
+    helper = osxkeychain
+
+[init]
+    defaultBranch = main

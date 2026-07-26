@@ -1,0 +1,35 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+###############################################################################
+# mount-rpi
+# Mounts SMB shares from rpi4 or rpi3 into /Volumes/Work/rpiX
+# Called automatically by launchd every 60 seconds.
+###############################################################################
+
+TARGET="$1"
+
+if [[ -z "$TARGET" ]]; then
+  echo "Usage: mount-rpi <rpi4|rpi3>"
+  exit 1
+fi
+
+MOUNTPOINT="/Volumes/Work/$TARGET"
+HOST="$TARGET.local"
+SHARE="work"
+
+mkdir -p "$MOUNTPOINT"
+
+echo "📡 Attempting mount of $HOST:$SHARE → $MOUNTPOINT"
+
+if mount | grep -q "$MOUNTPOINT"; then
+  echo "✔️ Already mounted."
+  exit 0
+fi
+
+mount_smbfs "//pi:@$HOST/$SHARE" "$MOUNTPOINT" 2>/dev/null || {
+  echo "⚠️ Mount failed or host unreachable."
+  exit 1
+}
+
+echo "✨ Mounted $TARGET successfully."
