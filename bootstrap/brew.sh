@@ -41,7 +41,7 @@ fi
 
 echo "📦 Installing core packages…"
 brew install python node fzf nano gh cloudflared jq wget curl tmux
-
+brew install --cask iterm2
 ###############################################################################
 # zsh4humans is NOT installed here — its installer requires an interactive
 # terminal and cannot run under curl|bash (confirmed: no non-interactive
@@ -63,7 +63,7 @@ curl -fsSL https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh | 
 
 echo "⚙️ Configuring fzf keybindings…"
 if [[ -f "/opt/homebrew/opt/fzf/install" ]]; then
-  yes | /opt/homebrew/opt/fzf/install --key-bindings --completion --no-update-rc
+  yes | /opt/homebrew/opt/fzf/install --key-bindings --completion --no-update-rc || true
 fi
 
 echo ""
