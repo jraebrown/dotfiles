@@ -29,24 +29,53 @@ else
 fi
 
 ###############################################################################
-# Create tunnels if missing
+# Create tunnels if missing, or take over/recreate if they already exist.
+# TUNNEL_MODE controls behavior when a name collision is found:
+#   reuse   (default) — use the existing tunnel's credentials as-is
+#   recreate           — delete the existing tunnel and create a fresh one
 ###############################################################################
+
+TUNNEL_MODE="${TUNNEL_MODE:-reuse}"
+
+get_tunnel_id() {
+  local name="$1"
+  cloudflared tunnel list -o json 2>/dev/null | \
+    python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+for t in data:
+    if t.get('name') == '$name':
+        print(t.get('id'))
+        break
+"
+}
 
 create_tunnel() {
   local name="$1"
-  if cloudflared tunnel list | grep -q "$name"; then
-    echo "✔️ Tunnel '$name' already exists."
-  else
-    echo "➕ Creating tunnel '$name'…"
-    cloudflared tunnel create "$name"
+  local existing_id
+  existing_id="$(get_tunnel_id "$name")"
+
+  if [[ -n "$existing_id" ]]; then
+    if [[ "$TUNNEL_MODE" == "recreate" ]]; then
+      echo "🗑️  Deleting existing tunnel '$name' ($existing_id)…"
+      cloudflared tunnel delete "$name"
+      echo "➕ Recreating tunnel '$name'…"
+      cloudflared tunnel create "$name"
+    else
+      echo "✔️ Tunnel '$name' already exists ($existing_id) — reusing it."
+    fi
+    return
   fi
+
+  echo "➕ Creating tunnel '$name'…"
+  cloudflared tunnel create "$name"
 }
 
 create_tunnel "macbookair"
 create_tunnel "rpi4"
 
-MAC_TUNNEL_ID=$(cloudflared tunnel list | grep macbookair | awk '{print $1}')
-RPI4_TUNNEL_ID=$(cloudflared tunnel list | grep rpi4 | awk '{print $1}')
+MAC_TUNNEL_ID="$(get_tunnel_id macbookair)"
+RPI4_TUNNEL_ID="$(get_tunnel_id rpi4)"
 
 echo "📐 macbookair tunnel ID: $MAC_TUNNEL_ID"
 echo "📐 rpi4 tunnel ID: $RPI4_TUNNEL_ID"
