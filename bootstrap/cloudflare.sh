@@ -4,14 +4,9 @@ set -euo pipefail
 ###############################################################################
 # Cloudflare Zero Trust + Tunnel Setup
 # Creates tunnels for macOS (SSH) and rPi4 (Cockpit).
-# Uses Cloudflare API token provided by user at bootstrap start.
 ###############################################################################
 
 echo "☁️ Cloudflare tunnel setup starting…"
-
-###############################################################################
-# Ensure cloudflared is installed
-###############################################################################
 
 if ! command -v cloudflared >/dev/null 2>&1; then
   echo "❌ cloudflared not installed. Install via brew.sh first."
@@ -20,13 +15,18 @@ fi
 
 ###############################################################################
 # Authenticate cloudflared
+# NOTE: this is a browser-based OAuth flow (opens Safari), NOT a token piped
+# via stdin. It writes a cert to ~/.cloudflared/cert.pem. The CF_API_TOKEN
+# prompt earlier in macos.sh is unused by this step — remove that prompt if
+# you don't need the token elsewhere, or use it for scripted API calls only.
 ###############################################################################
 
-echo "🔐 Logging into Cloudflare…"
-echo "$CF_API_TOKEN" | cloudflared login || {
-  echo "❌ Cloudflare login failed."
-  exit 1
-}
+if [[ -f "$HOME/.cloudflared/cert.pem" ]]; then
+  echo "✔️ Already authenticated with Cloudflare."
+else
+  echo "🔐 Opening browser to log into Cloudflare…"
+  cloudflared tunnel login
+fi
 
 ###############################################################################
 # Create tunnels if missing
@@ -34,7 +34,6 @@ echo "$CF_API_TOKEN" | cloudflared login || {
 
 create_tunnel() {
   local name="$1"
-
   if cloudflared tunnel list | grep -q "$name"; then
     echo "✔️ Tunnel '$name' already exists."
   else
@@ -46,23 +45,13 @@ create_tunnel() {
 create_tunnel "macbookair"
 create_tunnel "rpi4"
 
-###############################################################################
-# Get tunnel IDs
-###############################################################################
-
 MAC_TUNNEL_ID=$(cloudflared tunnel list | grep macbookair | awk '{print $1}')
 RPI4_TUNNEL_ID=$(cloudflared tunnel list | grep rpi4 | awk '{print $1}')
 
 echo "📐 macbookair tunnel ID: $MAC_TUNNEL_ID"
 echo "📐 rpi4 tunnel ID: $RPI4_TUNNEL_ID"
 
-###############################################################################
-# Write tunnel configs
-###############################################################################
-
 mkdir -p "$HOME/.cloudflared"
-
-echo "📝 Writing macbookair tunnel config…"
 
 cat > "$HOME/.cloudflared/macbookair.yml" <<EOF
 tunnel: $MAC_TUNNEL_ID
@@ -74,8 +63,6 @@ ingress:
   - service: http_status:404
 EOF
 
-echo "📝 Writing rpi4 tunnel config…"
-
 cat > "$HOME/.cloudflared/rpi4.yml" <<EOF
 tunnel: $RPI4_TUNNEL_ID
 credentials-file: $HOME/.cloudflared/$RPI4_TUNNEL_ID.json
@@ -86,21 +73,11 @@ ingress:
   - service: http_status:404
 EOF
 
-###############################################################################
-# Create DNS records
-###############################################################################
-
 echo "🌐 Creating DNS records…"
-
 cloudflared tunnel route dns macbookair macbookair.jraebrown.com
 cloudflared tunnel route dns rpi4 rpi4.jraebrown.com
 
-###############################################################################
-# Create launchd services
-###############################################################################
-
 echo "⚙️ Creating launchd services…"
-
 mkdir -p "$HOME/Library/LaunchAgents"
 
 cat > "$HOME/Library/LaunchAgents/com.jraebrown.macbookair.tunnel.plist" <<EOF
@@ -151,22 +128,9 @@ cat > "$HOME/Library/LaunchAgents/com.jraebrown.rpi4.tunnel.plist" <<EOF
 </plist>
 EOF
 
-###############################################################################
-# Load launchd services
-###############################################################################
-
 launchctl load "$HOME/Library/LaunchAgents/com.jraebrown.macbookair.tunnel.plist" || true
 launchctl load "$HOME/Library/LaunchAgents/com.jraebrown.rpi4.tunnel.plist" || true
 
-###############################################################################
-# Summary
-###############################################################################
-
 echo ""
-echo "✨ Cloudflare tunnels configured:"
-echo "  - macbookair.jraebrown.com → SSH → localhost:22"
-echo "  - rpi4.jraebrown.com → Cockpit → rpi4.local:9090"
-echo ""
-echo "Launchd services installed and loaded."
-echo "Cloudflare Zero Trust is active."
+echo "✨ Cloudflare tunnels configured."
 echo ""
