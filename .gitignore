@@ -1,0 +1,30 @@
+# Build artifacts
+.DS_Store
+.git/
+*.swp
+*.swo
+*~
+
+# Dotfiles repo metadata (auto-generated, not needed)
+all.txt
+manifest.sha
+
+# Local environment files (secrets)
+.env
+.env.local
+
+# Homebrew cache
+/Library/Caches/Homebrew/
+
+# SSH keys (keep config, not keys)
+.ssh/*.pem
+.ssh/*.pub
+.ssh/id_*
+!.ssh/config
+
+# Cloudflare credentials (keep config, not tokens)
+.cloudflared/*.json
+!.cloudflared/*.yml
+
+# Git
+.gitconfig.local
