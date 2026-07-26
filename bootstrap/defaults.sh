@@ -83,13 +83,17 @@ sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.captive.c
 
 echo "🔍 Configuring Spotlight indexing…"
 
+# mdutil can throw "unknown indexing state" on a fresh install before
+# Spotlight's mds service has fully initialized — known macOS quirk, not
+# something wrong here. Made non-fatal so it doesn't abort the rest of setup.
+
 # Enable indexing on Documents + Work
-sudo mdutil -i on "$HOME/Documents"
-sudo mdutil -i on "/Volumes/Backup/Work"
+sudo mdutil -i on "$HOME/Documents" || echo "   ⚠️  Skipped (Spotlight not ready yet) — rerun manually later if needed."
+sudo mdutil -i on "/Volumes/Backup/Work" || true
 
 # Disable indexing on CloudCache + Caches
-sudo mdutil -i off "/Volumes/Backup/CloudCache"
-sudo mdutil -i off "/Volumes/Backup/Caches"
+sudo mdutil -i off "/Volumes/Backup/CloudCache" || true
+sudo mdutil -i off "/Volumes/Backup/Caches" || true
 
 # Disable indexing on Backup folders
 sudo mdutil -i off "$HOME/Backup" 2>/dev/null || true
