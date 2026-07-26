@@ -16,10 +16,13 @@ echo "⚙️ Applying macOS minimal defaults…"
 defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 
 ###############################################################################
-# Disable local Time Machine snapshots
+# Disable Time Machine
+# 'tmutil disablelocal' was removed in macOS High Sierra (2017) with no
+# direct replacement — there is no way to disable ONLY local snapshots
+# anymore. This disables Time Machine entirely instead.
 ###############################################################################
 
-sudo tmutil disablelocal
+sudo tmutil disable
 
 ###############################################################################
 # Disable Siri + Assistant
@@ -59,7 +62,11 @@ defaults write com.apple.LaunchServices LSQuarantine -bool false
 # Security hardening
 ###############################################################################
 
-sudo spctl --master-disable
+# NOTE: since macOS Sequoia, this no longer fully disables Gatekeeper via CLI —
+# it only reveals the "Anywhere" option in System Settings, which still needs
+# manual confirmation there. Made non-fatal so it doesn't block the rest of
+# this script if the command's behavior has changed further on macOS 27.
+sudo spctl --master-disable || true
 sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
 sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on
 
@@ -82,7 +89,7 @@ sudo mdutil -i on "/Volumes/Backup/Work"
 
 # Disable indexing on CloudCache + Caches
 sudo mdutil -i off "/Volumes/Backup/CloudCache"
-sudo mdutil -i off "/Volumes/Caches"
+sudo mdutil -i off "/Volumes/Backup/Caches"
 
 # Disable indexing on Backup folders
 sudo mdutil -i off "$HOME/Backup" 2>/dev/null || true
