@@ -74,7 +74,12 @@ link "scripts/bin/link-dotfiles" ".local/bin/link-dotfiles"
 link "scripts/bin/mount-rpi" ".local/bin/mount-rpi"
 link "scripts/bin/update-system" ".local/bin/update-system"
 link "scripts/bin/brew-sync" ".local/bin/brew-sync"
-link "scripts/bin/cache-guard" ".local/bin/cache-guard"
+link "scripts/bin/check-cache-size" ".local/bin/check-cache-size"
+link "scripts/bin/check-disk-space" ".local/bin/check-disk-space"
+link "scripts/bin/mac-menu" ".local/bin/mac-menu"
+# cache-guard intentionally NOT linked — it re-symlinks ~/Library/Caches
+# every 30 seconds via its LaunchAgent, which is the exact operation that
+# caused a system-wide crash earlier. Removed from repo, do not re-add.
 
 ###############################################################################
 # Summary
