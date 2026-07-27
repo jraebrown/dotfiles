@@ -1,0 +1,7 @@
+tunnel: a178dea4-2ab7-4b93-8970-474f7b2f5ae4
+credentials-file: /Users/jonathan/.cloudflared/a178dea4-2ab7-4b93-8970-474f7b2f5ae4.json
+
+ingress:
+  - hostname: rpi4.jraebrown.com
+    service: http://rpi4.local:9090
+  - service: http_status:404

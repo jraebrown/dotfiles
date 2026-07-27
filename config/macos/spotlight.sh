@@ -1,0 +1,1 @@
+/Users/jonathan/dotfiles/macos/spotlight.sh

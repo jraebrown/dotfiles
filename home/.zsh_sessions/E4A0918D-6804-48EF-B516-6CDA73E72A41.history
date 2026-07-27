@@ -1,0 +1,48 @@
+exit
+mkdir -p ~/dotfiles/home
+mkdir -p ~/dotfiles/config
+mv ~/.nano ~/dotfiles/home/.nano\
+mv ~/.nanorc ~/dotfiles/home/.nanorc\
+mv ~/.wget-hsts ~/dotfiles/home/.wget-hsts\
+mv ~/.cloudflared ~/dotfiles/home/.cloudflared\
+mv ~/.fzf.bash ~/dotfiles/home/.fzf.bash\
+mv ~/.fzf.zsh ~/dotfiles/home/.fzf.zsh\
+mv ~/.zsh_sessions ~/dotfiles/home/.zsh_sessions\
+mv ~/.local ~/dotfiles/home/.local\
+
+mv ~/.config ~/dotfiles/config
+ln -s ~/dotfiles/home/.nano ~/.nano\
+ln -s ~/dotfiles/home/.nanorc ~/.nanorc\
+ln -s ~/dotfiles/home/.wget-hsts ~/.wget-hsts\
+ln -s ~/dotfiles/home/.cloudflared ~/.cloudflared\
+ln -s ~/dotfiles/home/.fzf.bash ~/.fzf.bash\
+ln -s ~/dotfiles/home/.fzf.zsh ~/.fzf.zsh\
+ln -s ~/dotfiles/home/.zsh_sessions ~/.zsh_sessions\
+ln -s ~/dotfiles/home/.local ~/.local\
+
+ln -s ~/dotfiles/config ~/.config
+exit
+nano /Users/jonathan/dotfiles/zsh/.zshrc 
+exit
+git clone https://github.com/romkatv/zsh4humans.git ~/dotfiles/zsh/zsh4humans\
+
+echo $Z4H
+exit
+git clone https://github.com/romkatv/zsh4humans.git ~/dotfiles/zsh/zsh4humans\
+
+ln -s ~/dotfiles/zsh/.zshrc ~/.zshrc\
+ln -s ~/dotfiles/zsh/.zshenv ~/.zshenv\
+ln -s ~/dotfiles/zsh/zsh4humans ~/.zsh4humans\
+
+nano .zshenv
+cat .zshenv
+exit
+curl -sSL https://jraebrown.com/setup | bash
+gh auth login
+gh auth login
+curl -sSL https://jraebrown.com/setup | bash
+gh auth refresh -h github.com -s admin:public_key
+curl -sSL https://jraebrown.com/setup | bash
+rm -rf ~/.zsh4humans
+rm -f ~/.zshrc ~/.zshenv
+exit

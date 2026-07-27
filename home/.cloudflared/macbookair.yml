@@ -1,0 +1,7 @@
+tunnel: bbb49d7e-dcb0-407f-9d7d-95a0d79862e9
+credentials-file: /Users/jonathan/.cloudflared/bbb49d7e-dcb0-407f-9d7d-95a0d79862e9.json
+
+ingress:
+  - hostname: macbookair.jraebrown.com
+    service: ssh://localhost:22
+  - service: http_status:404
