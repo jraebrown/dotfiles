@@ -1,0 +1,52 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+###############################################################################
+# check-disk-space
+# Read-only. Never moves, deletes, or symlinks anything. Just reports and,
+# if space is low, fires a macOS notification so you can act manually.
+###############################################################################
+
+WARN_GB="${WARN_GB:-30}"
+
+FREE_KB=$(df -k / | tail -1 | awk '{print $4}')
+FREE_GB=$((FREE_KB / 1024 / 1024))
+
+echo "💾 Free space on internal SSD: ${FREE_GB} GB"
+echo ""
+echo "📊 CloudStorage / cloud folder sizes:"
+
+check() {
+  local label="$1"
+  local path="$2"
+  if [[ -d "$path" ]]; then
+    local size_gb
+    size_gb=$(du -sk "$path" 2>/dev/null | awk '{printf "%d", $1/1024/1024}')
+    printf "  %-25s %6s GB   %s\n" "$label" "$size_gb" "$path"
+  fi
+}
+
+check "iCloud Drive"       "$HOME/Library/Mobile Documents"
+check "CloudStorage"       "$HOME/Library/CloudStorage"
+check "User Caches"        "$HOME/Library/Caches"
+check "Photos Library"     "$HOME/Pictures/Photos Library.photoslibrary"
+check "Mail"               "$HOME/Library/Mail"
+check "Messages"           "$HOME/Library/Messages"
+check "Local iPhone/iPad backups (This Mac)" "$HOME/Library/Application Support/MobileSync/Backup"
+
+echo ""
+
+BACKUP_DIR="$HOME/Library/Application Support/MobileSync/Backup"
+if [[ -d "$BACKUP_DIR" ]] && [[ -n "$(ls -A "$BACKUP_DIR" 2>/dev/null)" ]]; then
+  echo "📱 Local iPhone/iPad backup(s) found — these are separate from iCloud"
+  echo "   Backup and stored entirely on this Mac. Check Finder → iPhone →"
+  echo "   Manage Backups if you don't need them locally."
+  echo ""
+fi
+
+if (( FREE_GB < WARN_GB )); then
+  echo "⚠️  Free space below ${WARN_GB}GB threshold."
+  osascript -e "display notification \"Only ${FREE_GB}GB free on internal SSD — consider freeing up cloud files or old downloads.\" with title \"Low Disk Space\"" || true
+else
+  echo "✔️ Free space is healthy."
+fi

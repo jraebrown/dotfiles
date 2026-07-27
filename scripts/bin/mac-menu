@@ -1,0 +1,98 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+###############################################################################
+# mac-menu — first-run / maintenance TUI
+# Run this directly in a terminal (never via curl|bash — needs real stdin).
+###############################################################################
+
+REPO_DIR="$HOME/dotfiles"
+PLIST_BACKUP_DIR="$REPO_DIR/home-template/Preferences"
+APPSUPPORT_APPS=("Code" "Sublime Text" "iTerm2" "Rectangle")
+
+backup_settings() {
+  echo "📦 Backing up preferences to $PLIST_BACKUP_DIR…"
+  mkdir -p "$PLIST_BACKUP_DIR"
+  cp -R "$HOME/Library/Preferences/"*.plist "$PLIST_BACKUP_DIR/" 2>/dev/null || true
+
+  cd "$REPO_DIR"
+  git add home-template/
+  if git diff --cached --quiet; then
+    echo "✔️ Nothing changed since last backup."
+  else
+    git commit -m "Backup preferences $(date '+%Y-%m-%d %H:%M')"
+    git push origin main
+    echo "✨ Backed up and pushed to GitHub."
+  fi
+}
+
+restore_settings() {
+  echo "⚠️  Restoring will overwrite current preference files."
+  echo "   Quit any apps you care about first (Cmd+Q each one)."
+  read "?Have you quit your apps? Type YES to continue: " CONFIRM
+  if [[ "$CONFIRM" != "YES" ]]; then
+    echo "Aborted."
+    return
+  fi
+
+  cd "$REPO_DIR"
+  git pull origin main
+
+  if [[ ! -d "$PLIST_BACKUP_DIR" ]]; then
+    echo "❌ No backup found at $PLIST_BACKUP_DIR"
+    return
+  fi
+
+  cp -R "$PLIST_BACKUP_DIR/"*.plist "$HOME/Library/Preferences/" 2>/dev/null || true
+  echo "✨ Preferences restored. Log out and back in for everything to take effect."
+}
+
+install_apps() {
+  if ! command -v brew >/dev/null 2>&1; then
+    echo "❌ Homebrew not found — run the main setup script first."
+    return
+  fi
+
+  echo "Which apps?"
+  echo "  1) iTerm2"
+  echo "  2) Claude desktop"
+  echo "  3) Microsoft Office"
+  echo "  4) All of the above"
+  read "?Choice: " APP_CHOICE
+
+  case "$APP_CHOICE" in
+    1) brew install --cask iterm2 ;;
+    2) brew install --cask claude ;;
+    3) brew install --cask microsoft-office ;;
+    4)
+      brew install --cask iterm2
+      brew install --cask claude
+      brew install --cask microsoft-office
+      ;;
+    *) echo "Invalid choice." ;;
+  esac
+}
+
+main_menu() {
+  while true; do
+    echo ""
+    echo "👋 Welcome, Jonathan. What would you like to do today?"
+    echo ""
+    echo "  1) Backup settings   — push plists to GitHub repo"
+    echo "  2) Restore settings  — pull from repo (quits-apps reminder first)"
+    echo "  3) Install apps      — iTerm2 / Claude / Microsoft Office"
+    echo "  4) Exit"
+    echo ""
+    read "?Choice: " CHOICE
+
+    case "$CHOICE" in
+      1) backup_settings ;;
+      2) restore_settings ;;
+      3) install_apps ;;
+      4) echo "👋 Bye."; exit 0 ;;
+      *) echo "Invalid choice — pick 1-4." ;;
+    esac
+  done
+}
+
+main_menu
